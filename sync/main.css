@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap');
+
+:root {
+    --text-color: black;
+    --text-light: #3a3a3a;
+    --background: white;
+    --border: #afafaf;
+    --border-light: #c7c7c7;
+    --border-lighter: #eee;
+    --header-color: #eaeaea;
+    --bg-accent: #9d9d9d;
+
+    --global-transition: 0ms;
+}
+
+[data-theme="dark"] {
+    --text-color: #fff;
+    --text-light: #ddd;
+    --background: #333;
+    --border: #666;
+    --border-light: #555;
+    --border-lighter: #444;
+    --header-color: #151515;
+    --bg-accent: #444;
+}
+
+[data-transitioning="yes"] {
+    --global-transition: 500ms;
+}
+
+* {
+    font-family: 'Quicksand', sans-serif;
+    transition: var(--global-transition);
+    color: var(--text-color);
+}
+
+body {
+    margin: 0;
+    background: var(--background);
+}
+
+input, textarea {
+    background: var(--background);
+    color: var(--text-color);
+}
+
+a {
+    color: var(--text-light);
+    transition: 200ms;
+}
+
+a:hover {
+    color: var(--text-color);
+}
+
+input {
+    margin: 10px;
+    padding: 5px;
+    font-size: 18px;
+    border-radius: 0;
+    border: none;
+    border-bottom: 2px solid var(--border);
+    outline: none;
+    transition: 100ms;
+}
+
+input:hover {
+    border-bottom: 2px solid var(--border-light);
+}
+
+button.clean {
+    background: none;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    transition: 200ms;
+    font-size: 18px;
+}
+
+
+/* SVG ICONS */
+.icon {
+    background: none;
+    border: none;
+    transition: 200ms;
+    text-decoration: none;
+}
+
+.icon > svg {
+    height: 40px;
+    width: 40px;
+    fill: var(--text-color);
+    border: none;
+}
+
+.icon:hover > svg {
+    cursor: pointer;
+    transform: scale(1.1);
+}
+
+/* HEADER */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-content: center;
+    background: var(--header-color);
+    padding: 4px;
+}
+
+#ME_INPUT {
+    margin: 0;
+    border: none;
+    border-radius: 5px;
+}
+
+@-webkit-keyframes fade-in {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

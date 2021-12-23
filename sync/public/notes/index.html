@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Notes</title>
+</head>
+<style>
+    body {
+        overflow-y: hidden;
+    }
+    textarea {
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        border: none;
+        border-radius: 4px;
+        padding: 10px;
+        overflow-y: scroll;
+        outline: none;
+        font-size: 18px;
+    }
+</style>
+<body>
+    <label for="text"></label>
+    <textarea id="text"></textarea>
+</body>
+</html>
+<script>
+    const TEXT = document.getElementById('text');
+
+    TEXT.focus();
+
+    TEXT.style.width = window.innerWidth-25 + 'px';
+    TEXT.style.height = window.innerHeight-76 + 'px';
+
+    if (localStorage.notes_text) {
+        TEXT.value = localStorage.notes_text;
+    }
+
+    TEXT.oninput = () => {
+        localStorage.notes_text = TEXT.value;
+    };
+</script>
