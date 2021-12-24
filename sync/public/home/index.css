@@ -1,0 +1,116 @@
+*::-webkit-scrollbar {
+    display: none;
+}
+
+.entry {
+    display: flex;
+    border-bottom: 1px solid var(--border-lighter);
+    border-radius: 0;
+    height: 50px;
+    justify-content: space-between;
+    align-items: center;
+    margin: 5px;
+    font-size: 18px;
+    transition: 200ms;
+}
+
+#go {
+    background: none;
+    height: 40px;
+    width: 50px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    transition: 200ms;
+}
+
+#go:hover {
+    cursor: pointer;
+    box-shadow: 0 0 4px 2px var(--header-color);
+    color: var(--text-color);
+}
+
+/* The switch - the box around the slider */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 60px;
+    height: 34px;
+    border-radius: 5000px;
+    transition: 300ms;
+}
+
+/* Hide default HTML checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+    transition: 300ms;
+}
+
+/* The slider */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #dc1515;
+    -webkit-transition: .4s;
+    transition: .3s;
+    border-radius: 5000px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 26px;
+    width: 26px;
+    left: 4px;
+    bottom: 4px;
+    background-color: var(--background);
+    -webkit-transition: .4s;
+    transition: .4s;
+    border-radius: 5000px;
+}
+
+input:checked + .slider {
+    background-color: #38b028;
+}
+
+input:checked + .slider:before {
+    -webkit-transform: translateX(26px);
+    -ms-transform: translateX(26px);
+    transform: translateX(26px);
+}
+
+#error {
+    transition: 400ms;
+    color: red;
+}
+
+/* The alert message box */
+#alert {
+    padding: 20px;
+    background-color: var(--bg-accent);
+    color: var(--text-color);
+    position: absolute;
+    right: 20px;
+    transition: opacity 0.2s;
+    border-radius: 10px;
+}
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+    color: var(--text-light);
+}

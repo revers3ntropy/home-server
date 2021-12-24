@@ -78,31 +78,34 @@ func redirect(possibleRedirects []string, path string, w http.ResponseWriter, re
 	http.Redirect(w, req, redirect, http.StatusSeeOther)
 }
 
+func HTMLStuff() string {
+	// main.js
+	addition := "<script defer>"
+	jsMain, _ := os.ReadFile("main.js")
+	addition += string(jsMain)
+
+	// header.html
+	addition += ";const HEADER_DIV = document.createElement('div'); HEADER_DIV.innerHTML = `"
+	headerHTML, _ := os.ReadFile("header.html")
+	addition += string(headerHTML)
+	addition += "`; document.body.prepend(HEADER_DIV)</script>"
+
+	// main.css
+	addition += "<style>"
+	cssMain, _ := os.ReadFile("main.css")
+	addition += string(cssMain)
+	addition += "</style>"
+
+	return addition
+}
+
 func dealWithFileExt(resource string, content []byte, w http.ResponseWriter) []byte {
 	splitParts := strings.Split(resource, ".")
 	ending := splitParts[len(splitParts)-1]
 
 	switch ending {
 	case "html":
-		// main.js
-		addition := "<script>"
-		jsMain, _ := os.ReadFile("main.js")
-		addition += string(jsMain)
-
-		// header.html
-		addition += ";const HEADER_DIV = document.createElement('div'); HEADER_DIV.innerHTML = `"
-		headerHTML, _ := os.ReadFile("header.html")
-		addition += string(headerHTML)
-		addition += "`; document.body.prepend(HEADER_DIV)</script>"
-
-		// main.css
-		addition += "<style>"
-		cssMain, _ := os.ReadFile("main.css")
-		addition += string(cssMain)
-		addition += "</style>"
-
-		content = []byte(string(content) + addition)
-
+		content = []byte(string(content) + HTMLStuff())
 		w.Header().Set("content-type", "text/html; charset=utf-8")
 	case "js":
 		w.Header().Set("content-type", "application/javascript")
@@ -119,6 +122,32 @@ func dealWithFileExt(resource string, content []byte, w http.ResponseWriter) []b
 	}
 
 	return content
+}
+
+func filePreprocessor(fileContent []byte) []byte {
+	content := string(fileContent)
+	for strings.Contains(content, "#include") {
+		idx := strings.Index(content, "#include")
+
+		// space
+		idx += len("#include ")
+
+		var path string
+		for content[idx] != '#' {
+			path += string(content[idx])
+			idx++
+		}
+
+		fileContent, err := os.ReadFile(path)
+		if err != nil {
+			fmt.Println("Cannot read included file " + path)
+			return fileContent
+		}
+
+		content = strings.Replace(content, "#include "+path+"#", string(fileContent), -1)
+	}
+
+	return []byte(content)
 }
 
 func serveFile(path string, w http.ResponseWriter) {
@@ -142,6 +171,7 @@ func serveFile(path string, w http.ResponseWriter) {
 		}
 
 		content = dealWithFileExt(resource, content, w)
+		content = filePreprocessor(content)
 
 		_, _ = fmt.Fprintf(w, string(content))
 

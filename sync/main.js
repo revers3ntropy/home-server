@@ -1,6 +1,5 @@
 if (!localStorage.getItem("theme"))
     localStorage.setItem('theme', 'light');
-console.log(localStorage.getItem("theme"));
 let DARK_MODE = localStorage.getItem("theme") === "dark";
 
 const LIGHT_THEME_ICON = `
@@ -50,7 +49,6 @@ function detectColorScheme(MODE_BUTTON) {
         // OS theme setting detected as dark
         theme = "dark";
     }
-
     MODE_BUTTON.innerHTML = DARK_MODE ? DARK_THEME_ICON : LIGHT_THEME_ICON;
 
     // slow down the transition to make it look cooler
@@ -64,7 +62,6 @@ function detectColorScheme(MODE_BUTTON) {
     cachedTheme = theme;
     document.documentElement.setAttribute("data-theme", theme);
 }
-
 window.onload = () => {
 
     const MODE_BUTTON = document.getElementById('MODE_BUTTON');
@@ -80,4 +77,4 @@ window.onload = () => {
     };
 
     detectColorScheme(MODE_BUTTON);
-}
+};

@@ -1,0 +1,38 @@
+
+:root {
+    --light-green: rgba(0, 255, 0, 0.05);
+    --vivid-green: rgba(0, 255, 0, 0.13);
+}
+
+[data-theme="dark"] {
+    --light-green: rgba(0, 255, 0, 0.2);
+    --vivid-green: rgba(0, 255, 0, 0.15);
+}
+
+ul {
+    list-style-type:none;
+}
+
+li {
+    margin: 0 20px 0 0;
+    border-bottom: 2px solid var(--border-lighter);
+    padding: 6px 10px;
+    transition: 300ms;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+li:hover {
+    cursor: pointer;
+    background: var(--border-lighter)
+}
+
+li.checked {
+    background: var(--light-green);
+    color: #4b4b4b;
+}
+
+li.checked:hover {
+    background: var(--vivid-green);
+}
