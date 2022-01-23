@@ -114,6 +114,14 @@ func (r *Reader) SelectWhere(column string, selector func(row []string) bool) []
 	return c
 }
 
+func (r *Reader) Len() int {
+	var n int
+	for _, _ = range r.rows {
+		n++
+	}
+	return n
+}
+
 func (r *Reader) Update(filter func(row []string) bool, updator func(row []string) []string) {
 	for i, row := range r.rows {
 		if filter(row) {

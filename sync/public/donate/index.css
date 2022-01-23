@@ -1,0 +1,46 @@
+#balances {
+    display: flex;
+    justify-content: space-evenly;
+    align-content: center;
+}
+
+#balances > div {
+    padding: 20px;
+    margin: 20px;
+    font-size: 20px;
+    border: 1px solid var(--border);
+
+}
+
+.ledger {
+    padding: 20px;
+}
+
+.transaction {
+    border-bottom: 1px solid var(--border);
+    padding: 10px;
+    margin: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h2 {
+    text-align: center;
+    font-size: 30px;
+    padding: 30px;
+}
+
+button {
+    border: none;
+    color: var(--text-color);
+    background: var(--bg-accent);
+    border-radius: 4px;
+    padding: 4px;
+    font-size: 16px;
+}
+
+button:hover {
+    cursor: pointer;
+    transform: scale(1.05);
+}

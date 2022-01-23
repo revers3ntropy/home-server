@@ -34,6 +34,20 @@ function parseCSV (text) {
         .sort();
 }
 
+var IP = '192.168.0.64';
+async function api (path, body={}) {
+    const res = await (await fetch(`http://${IP}/${path}`, {
+        method: 'POST',
+        body: JSON.stringify(body)
+    })).text();
+
+    try {
+        return JSON.parse(res);
+    } catch (e) {
+        return res;
+    }
+}
+
 let cachedTheme;
 function detectColorScheme(MODE_BUTTON) {
     // default to light

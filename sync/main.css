@@ -123,6 +123,13 @@ button.clean {
     transform: scale(1.1);
 }
 
+.svg {
+    height: 30px;
+    width: 30px;
+    fill: var(--text-color);
+    border: none;
+}
+
 /* HEADER */
 header {
     display: flex;

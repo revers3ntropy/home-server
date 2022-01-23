@@ -17,6 +17,7 @@ const PORT = "80"
 
 var REDIRECTS = CSV.NewReader("./public/redirects.csv")
 var SUGGESTIONS = CSV.NewReader("./public/suggestions.csv")
+var TRANSACTIONS = CSV.NewReader("./public/transactions.csv")
 
 var APIs = map[string]func(w http.ResponseWriter, body map[string]interface{}){
 	// redirect
@@ -28,6 +29,10 @@ var APIs = map[string]func(w http.ResponseWriter, body map[string]interface{}){
 	"suggest":            suggest,
 	"do-undo-suggestion": doUndoSuggestion,
 	"delete-suggestion":  deleteSuggestion,
+
+	// charity
+	"make-transaction":    makeTransaction,
+	"confirm-transaction": confirmTransaction,
 }
 
 func apiCall(w http.ResponseWriter, r *http.Request, path string) {
@@ -196,6 +201,7 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 	possibleRedirects := REDIRECTS.SelectWhere("to", func(row []string) bool {
 		return row[0] == path && row[2] == "1"
 	})
+
 	if len(possibleRedirects) > 0 {
 		redirect(possibleRedirects, path, w, req)
 		return

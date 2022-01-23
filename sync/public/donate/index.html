@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport">
+    <title>Donate</title>
+
+    <style>#include public/donate/index.css#</style>
+</head>
+<body>
+
+    <div id="my-balance"></div>
+
+    <div id="balances">
+        <div>
+            Joseph: £<span id="joseph-balance"></span>
+        </div>
+        <div>
+            Beth: £<span id="beth-balance"></span>
+        </div>
+        <div>
+            Ben: £<span id="ben-balance"></span>
+        </div>
+        <div>
+            Erin: £<span id="erin-balance"></span>
+        </div>
+    </div>
+
+    <div style="text-align: center">
+        <h2>Donate</h2>
+        <label>
+            £<input id="donate-amount">
+        </label>
+        <label>
+            to <input id="donate-to">
+        </label>
+        <button id="go">Donate</button><Br>
+        <label>
+            details <input id="donate-detail">
+        </label>
+    </div>
+
+    <h2>Ledger</h2>
+    <div id="ledger"></div>
+</body>
+</html>
+<script defer>#include public/donate/index.js#</script>

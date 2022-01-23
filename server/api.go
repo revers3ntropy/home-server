@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	time "time"
 )
+
+// REDIRECTS
 
 func deleteRedirect(w http.ResponseWriter, body map[string]interface{}) {
 	from, fromSuccess := strFromMap(body, "from")
@@ -70,6 +73,8 @@ func addRedirect(w http.ResponseWriter, body map[string]interface{}) {
 	}
 }
 
+// SUGGESTIONS
+
 func suggest(w http.ResponseWriter, body map[string]interface{}) {
 	suggestion, suggestionSuccess := strFromMap(body, "suggestion")
 	if !suggestionSuccess {
@@ -115,6 +120,80 @@ func deleteSuggestion(w http.ResponseWriter, body map[string]interface{}) {
 
 	SUGGESTIONS.Delete(func(row []string) bool {
 		return row[0] == suggestion
+	})
+
+	_, _ = fmt.Fprintf(w, "{\"ok\": true}")
+}
+
+// CHARITY TRANSACTIONS
+
+func makeTransaction(w http.ResponseWriter, body map[string]interface{}) {
+	person, personSuccess := strFromMap(body, "person")
+	if !personSuccess {
+		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.person is not string\"}")
+		return
+	}
+
+	in, inSuccess := strFromMap(body, "in")
+	if !inSuccess {
+		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.in is not string\"}")
+		return
+	}
+
+	out, outSuccess := strFromMap(body, "out")
+	if !outSuccess {
+		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.out is not string\"}")
+		return
+	}
+
+	instructions, instructionsSuccess := strFromMap(body, "instructions")
+	if !instructionsSuccess {
+		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.instructions is not string\"}")
+		return
+	}
+
+	to, toSuccess := strFromMap(body, "to")
+	if !toSuccess {
+		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.to is not string\"}")
+		return
+	}
+
+	detail, detailSuccess := strFromMap(body, "detail")
+	if !detailSuccess {
+		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.detail is not string\"}")
+		return
+	}
+
+	current := strconv.Itoa(int(time.Now().Unix()))
+
+	id := strconv.Itoa(TRANSACTIONS.Len())
+
+	TRANSACTIONS.Append([]string{id, person, in, out, current, "", instructions, to, detail, "0", ""})
+
+	_, _ = fmt.Fprintf(w, "{\"ok\": true}")
+}
+
+func confirmTransaction(w http.ResponseWriter, body map[string]interface{}) {
+	id, idSuccess := strFromMap(body, "id")
+	if !idSuccess {
+		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.id is not string\"}")
+		return
+	}
+
+	detail, detailSuccess := strFromMap(body, "detail")
+	if !detailSuccess {
+		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.detail is not string\"}")
+		return
+	}
+
+	current := strconv.Itoa(int(time.Now().Unix()))
+
+	TRANSACTIONS.Set("confirmed", current, func(row []string) bool {
+		return row[0] == id
+	})
+
+	TRANSACTIONS.Set("confirm_detail", detail, func(row []string) bool {
+		return row[0] == id
 	})
 
 	_, _ = fmt.Fprintf(w, "{\"ok\": true}")

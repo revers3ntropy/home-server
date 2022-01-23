@@ -76,7 +76,7 @@ function deleteOfName (name) {
     if (!confirm(`Are you sure you want to delete '${name}'`)) {
         return;
     }
-    fetch('http://coppin/delete-redirect', {
+    fetch('http://192.168.0.64/delete-redirect', {
         method: 'POST',
         body: JSON.stringify({
             from: name
@@ -85,11 +85,7 @@ function deleteOfName (name) {
 }
 
 function toggleOfName (name, value) {
-    console.log(JSON.stringify({
-        from: name,
-        value
-    }));
-    fetch('http://coppin/toggle-redirect', {
+    fetch('http://192.168.0.64/toggle-redirect', {
         method: 'POST',
         body: JSON.stringify({
             from: name,
@@ -103,7 +99,7 @@ let CACHE;
 async function loadData (search, useCache) {
     if (!useCache || !CACHE) {
         const data = await fetch(
-            'http://192.168.86.54/redirects.csv?cachebust=' + (Math.random() * 100000).toFixed(0));
+            'http://192.168.0.64/redirects.csv?cachebust=' + (Math.random() * 100000).toFixed(0));
         CACHE = parseCSV(await data.text());
         document.getElementById('number-of-total').innerHTML = CACHE.length;
     }
@@ -139,8 +135,8 @@ async function render (search=SEARCH.value, useCache=false) {
         }
         entries.innerHTML += `
                 <div class="entry">
-                    <a href="http://coppin/${row[0]}" style="margin: 4px" target="_blank">
-                        ${row[0]}
+                    <a href="http://to/${row[0]}" style="margin: 4px" target="_blank">
+                        ${row[0] || '-'}
                     </a>
                     <a href="${row[1]}" style="margin: 4px" target="_blank">${url}</a>
                     <div style="display: flex; justify-content: center; align-items: center">
@@ -187,7 +183,7 @@ document.getElementById('go').addEventListener('click', () => {
         return;
     }
 
-    fetch('http://192.168.86.54/add-redirect', {
+    fetch('http://192.168.0.64/add-redirect', {
         method: 'POST',
         body: JSON.stringify({ from, to })
     }).then(handleServerResponse);
