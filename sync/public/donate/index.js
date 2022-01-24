@@ -1,6 +1,6 @@
 const now = + new Date();
 
-function timeDifference(previous) {
+function timeDifference(time) {
 
 	const msPerMinute = 60 * 1000;
 	const msPerHour = msPerMinute * 60;
@@ -8,7 +8,7 @@ function timeDifference(previous) {
 	const msPerMonth = msPerDay * 30;
 	const msPerYear = msPerDay * 365;
 
-	const elapsed = now - previous;
+	const elapsed = now - time;
 
 	if (elapsed < msPerMinute) {
 		return Math.round(elapsed/1000) + ' seconds ago';
@@ -96,11 +96,14 @@ function parse (text) {
 		.sort((t1, t2) => t2.time - t1.time);
 }
 
+let myBalance = 0;
+
 const jBalance = document.getElementById('joseph-balance');
 const bethBalance = document.getElementById('beth-balance');
 const benBalance = document.getElementById('ben-balance');
 const eBalance = document.getElementById('erin-balance');
 const myBalance = document.getElementById('my-balance');
+
 async function updateBalance (data) {
 	let erin = 0, joseph = 0, ben = 0, beth = 0;
 
@@ -118,6 +121,7 @@ async function updateBalance (data) {
 	benBalance.innerText = ben.toString();
 	bethBalance.innerText = beth.toString();
 
+
 	let me;
 	switch (localStorage.me.toLowerCase()) {
 		case 'erin': me = erin.toString(); break;
@@ -127,12 +131,59 @@ async function updateBalance (data) {
 		default: return;
 	}
 
+	myBalance = parseInt(me);
+
 	myBalance.innerHTML = `
 		<div style="font-size: 30px; text-align: center; margin: 20px;">
 			Your balance: <span style="font-size: 40px">£${me}</span>
 		</div>
 	`;
 }
+
+const DONATE_AMOUNT = document.getElementById('donate-amount');
+const DONATE_TO = document.getElementById('donate-to');
+const DONATE_DETAIL = document.getElementById('donate-detail');
+
+/**
+ * Donates an amount
+ * @returns {string} error message
+ */
+async function donate () {
+	let me = localStorage.me.toLowerCase();
+	if (['ben', 'erin', 'joseph', 'beth'].includes(me) === -1) {
+		return 'invalid user';
+	}
+
+	const amount = DONATE_AMOUNT.value;
+	const to = DONATE_TO.value;
+	const detail = DONATE_DETAIL.value;
+
+	if (amount > myBalance) {
+		return 'not enough balance in your account';
+	}
+
+	const res = JSON.parse(await (await fetch('http://192.168.0.28/make-transaction', {
+		method: 'POST',
+		body: {
+			in: 0,
+			out: amount,
+			to,
+			instructions: detail, 
+			person: me, 
+		}
+	})).text());
+
+	if (res.ok) return;
+	return res.error || 'unknown error';
+}
+
+const ERROR = document.getElementById('error');
+
+async function doTransaction () {
+	const res = await donate();
+	ERROR.innerHTML = res;
+}
+
 
 async function reload () {
 	const res = await (await fetch(`http://192.168.0.64/transactions.csv`)).text();
