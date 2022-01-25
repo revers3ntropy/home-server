@@ -10,8 +10,7 @@
     <style>#include public/donate/index.css#</style>
 </head>
 <body>
-
-    <p id="error" style="color: red; text-align: center"></p>
+    <div id="alert"></div>
 
     <div id="my-balance"></div>
 
@@ -38,10 +37,12 @@
         <label>
             to <input id="donate-to">
         </label>
-        <button id="go">Donate</button><Br>
+        <div style="margin-top: 20px"></div>
         <label>
-            details <input id="donate-detail">
-        </label>
+            Details: <br>
+            <input id="donate-detail" style="width: 70vw">
+        </label><br>
+        <button id="go">Donate</button><Br>
     </div>
 
     <h2>Ledger</h2>

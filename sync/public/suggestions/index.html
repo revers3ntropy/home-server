@@ -6,7 +6,7 @@
 </head>
 <body>
     <h1 style="padding: 10px">
-        Suggestions/Todos/Ideas/Bugs for this
+        Suggestions/todos/Ideas/Bugs for this
     </h1>
     <div id="error" style="color: red"></div>
     <label for="suggest"></label>
@@ -41,7 +41,7 @@
     async function suggest () {
         if (!SUGGEST.value) return;
 
-        await fetch('http://to/suggest', {
+        await fetch('http://192.168.0.64/suggest', {
             method: 'POST',
             body: JSON.stringify({
                 suggestion: SUGGEST.value
@@ -53,7 +53,7 @@
 
     // checks or unchecks item
     async function flip (suggestion, value) {
-        fetch('http://to/do-undo-suggestion', {
+        fetch('http://192.168.0.64/do-undo-suggestion', {
             method: 'POST',
             body: JSON.stringify({
                 suggestion,
@@ -63,7 +63,7 @@
     }
 
     async function deleteSuggestion (suggestion) {
-        fetch('http://to/delete-suggestion', {
+        fetch('http://192.168.0.64/delete-suggestion', {
             method: 'POST',
             body: JSON.stringify({
                 suggestion
@@ -72,7 +72,7 @@
     }
 
     async function show () {
-        const raw = await fetch('http://to/suggestions.csv?cachebust=' + (Math.random() * 100000).toFixed(0))
+        const raw = await fetch('http://192.168.0.64/suggestions.csv?cachebust=' + (Math.random() * 100000).toFixed(0))
         const text = await raw.text()
         const data = parseCSV(text)
             .sort(([value1, priority1], [value2, priority2]) =>

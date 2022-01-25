@@ -2,8 +2,8 @@ let now = + new Date();
 
 const myCanvas = document.createElement('canvas');
 document.body.appendChild(myCanvas);
-myCanvas.width = window.innerWidth || document.body.clientWidth;
-myCanvas.height = window.innerHeight || document.body.clientHeight;
+myCanvas.width = document.body.clientWidth;
+myCanvas.height = document.body.clientHeight;
 
 const myConfetti = confetti.create(myCanvas, {
 	resize: true,
@@ -12,32 +12,51 @@ const myConfetti = confetti.create(myCanvas, {
 
 function doConfetti () {
 	myConfetti({
-		particleCount: 100,
-		spread: 160
+		particleCount: 200,
+		spread: 200
 	});
 }
 
-function timeDifference(time) {
-	const msPerMinute = 60 * 1000;
-	const msPerHour = msPerMinute * 60;
-	const msPerDay = msPerHour * 24;
-	const msPerMonth = msPerDay * 30;
-	const msPerYear = msPerDay * 365;
+const ALERT_BANNER = document.getElementById('alert');
 
-	const elapsed = now - time;
+if (!ALERT_BANNER) {
+	throw 'document not loaded';
+}
 
-	if (elapsed < msPerMinute) {
-		return Math.round(elapsed/1000) + ' seconds ago';
-	} else if (elapsed < msPerHour) {
-		return Math.round(elapsed/msPerMinute) + ' minutes ago';
-	} else if (elapsed < msPerDay ) {
-		return Math.round(elapsed/msPerHour ) + ' hours ago';
-	} else if (elapsed < msPerMonth) {
-		return '~' + Math.round(elapsed/msPerDay) + ' days ago';
-	} else if (elapsed < msPerYear) {
-		return '~' + Math.round(elapsed/msPerMonth) + ' months ago';
+ALERT_BANNER.style.display = 'none';
+
+function alertBanner (msg) {
+	ALERT_BANNER.style.display = 'flex';
+	ALERT_BANNER.innerHTML = `
+            ${msg}
+            <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
+        `;
+	setTimeout(() => {
+		ALERT_BANNER.style.display = "none";
+	}, 5000);
+}
+
+function timeDifference (time) {
+	const sPerMinute = 60;
+	const sPerHour = sPerMinute * 60;
+	const sPerDay = sPerHour * 24;
+	const sPerMonth = sPerDay * 30;
+	const sPerYear = sPerDay * 365;
+
+	const elapsed = (now/1000) - time;
+
+	if (elapsed < sPerMinute) {
+		return Math.round(elapsed) + ' seconds ago';
+	} else if (elapsed < sPerHour) {
+		return Math.round(elapsed / sPerMinute) + ' minutes ago';
+	} else if (elapsed < sPerDay ) {
+		return Math.round(elapsed / sPerHour) + ' hours ago';
+	} else if (elapsed < sPerMonth) {
+		return Math.round(elapsed / sPerDay) + ' days ago';
+	} else if (elapsed < sPerYear) {
+		return Math.round(elapsed / sPerMonth) + ' months ago';
 	} else {
-		return '~' + Math.round(elapsed/msPerYear ) + ' years ago';
+		return Math.round(elapsed / sPerYear) + ' years ago';
 	}
 }
 
@@ -47,10 +66,11 @@ function timeDifference(time) {
  * @param {string} time
  * @param {string} to
  * @param {string} detail
+ * @param {string} id
  * @returns {string} HTML
  */
-function transaction ({person, amount, time, to, detail}) {
-	const timeAgo = timeDifference(time * 1000);
+function transaction ({person, amount, time, to, detail, id}) {
+	const timeAgo = timeDifference(time);
 	const date = new Date(time * 1000);
 	const timeFormatted = date.toLocaleString();
 	person = person[0].toUpperCase() + person.substr(1);
@@ -84,6 +104,12 @@ function transaction ({person, amount, time, to, detail}) {
 			</div>
 			<div>
 				${timeFormatted} - ${timeAgo}
+				<button onclick="deleteTransaction(${id})" class="icon">
+					<svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#000000">
+					<path d="M0 0h24v24H0V0z" fill="none"/>
+					<path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-3.5l-1-1zM18 7H6v12c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7z"/>
+					</svg>
+				</button>
 			</div>
 		</div>
 	`;
@@ -146,7 +172,7 @@ async function updateBalance (data) {
 		default: return;
 	}
 
-	spendingPower = parseInt(me);
+	spendingPower = parseFloat(me);
 
 	myBalance.innerHTML = `
 		<div style="font-size: 30px; text-align: center; margin: 20px;">
@@ -169,19 +195,33 @@ async function donate () {
 		return 'invalid user';
 	}
 
-	const amount = DONATE_AMOUNT.value;
+	let amount;
 	const to = DONATE_TO.value;
 	const detail = DONATE_DETAIL.value;
 
+	if (!DONATE_AMOUNT.value) {
+		return 'must specify amount';
+	}
+
+	try {
+		amount = parseFloat(DONATE_AMOUNT.value);
+	} catch (e) {
+		return 'Invalid amount';
+	}
+
 	if (amount > spendingPower) {
 		return 'not enough balance in your account';
+	}
+
+	if (amount < 0.01) {
+		return 'to small of an amount to donate';
 	}
 
 	const res = JSON.parse(await (await fetch('http://192.168.0.64/make-transaction', {
 		method: 'POST',
 		body: JSON.stringify({
 			in: '0',
-			out: amount,
+			out: amount.toFixed(2),
 			to,
 			detail,
 			person: me,
@@ -199,19 +239,64 @@ async function donate () {
 	return res.error || 'unknown error';
 }
 
-const ERROR = document.getElementById('error');
-
 async function doTransaction () {
-	ERROR.innerHTML = await donate();
+	let res = await donate();
+	if (res) alertBanner(res);
+}
+
+async function deleteTransaction (id) {
+
+	if (typeof id !== "number") {
+		alertBanner('invalid deletion');
+		return;
+	}
+
+	if (id < 0) {
+		alertBanner('invalid delete id');
+		return;
+	}
+
+	let trans = transactionByID(id);
+	if (!trans) {
+		alertBanner('invalid delete id - trans not found');
+		return;
+	}
+
+	const amount = parseFloat(trans.in) - parseFloat(trans.out);
+	if (!confirm(`Are you sure you want to delete the transaction of £${amount} to ${
+			trans.to || 'unknown'}? This action is irreversible.`)) {
+		return;
+	}
+
+	const res = JSON.parse(await (await fetch('http://192.168.0.64/delete-transaction', {
+		method: 'POST',
+		body: JSON.stringify({
+			id: id.toString()
+		})
+	})).text());
+
+	if (!res.ok) {
+		alertBanner(res.error);
+	}
+
+	await reload();
 }
 
 document.getElementById('go').onclick = doTransaction;
 
+let transactions;
+
+function transactionByID (id) {
+	if (!transactions) return false;
+	const res = transactions.filter(t => t.id === id.toString());
+	if (!res || !res.length) return false;
+	return res[0];
+}
 
 async function reload () {
 	now = + new Date();
 	const res = await (await fetch(`http://192.168.0.64/transactions.csv`)).text();
-	const transactions = parse(res);
+	transactions = parse(res);
 
 	const ledger = document.getElementById('ledger');
 	ledger.innerHTML = '';
@@ -225,3 +310,5 @@ async function reload () {
 }
 
 reload();
+
+window.setInterval(reload, 2000);

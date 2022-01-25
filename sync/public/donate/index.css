@@ -12,7 +12,7 @@
 
 }
 
-.ledger {
+#ledger {
     padding: 20px;
 }
 
@@ -50,4 +50,41 @@ canvas {
     left: 0;
     top: 0;
     z-index: -1000;
+}
+
+#go {
+    padding: 8px;
+    font-size: 20px;
+    background: var(--bg-accent);
+}
+
+.transaction .icon > svg {
+    width: 30px;
+    height: 30px;
+}
+
+/* The alert message box */
+#alert {
+    padding: 20px;
+    background-color: var(--bg-accent);
+    color: var(--text-color);
+    position: absolute;
+    right: 20px;
+    transition: opacity 0.2s;
+    border-radius: 10px;
+}
+.closebtn {
+    margin-left: 15px;
+    color: white;
+    font-weight: bold;
+    float: right;
+    font-size: 22px;
+    line-height: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+/* When moving the mouse over the close button */
+.closebtn:hover {
+    color: var(--text-light);
 }

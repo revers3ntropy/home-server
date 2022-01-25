@@ -33,6 +33,7 @@ var APIs = map[string]func(w http.ResponseWriter, body map[string]interface{}){
 	// charity
 	"make-transaction":    makeTransaction,
 	"confirm-transaction": confirmTransaction,
+	"delete-transaction":  deleteTransaction,
 }
 
 func apiCall(w http.ResponseWriter, r *http.Request, path string) {

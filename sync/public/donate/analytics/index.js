@@ -68,7 +68,12 @@ async function show (data) {
 			case 'ben': ben += donation; break;
 			case 'beth': beth += donation; break;
 		}
-        causes[trans.to] += donation;
+		if (trans.to && donation > 0) {
+			if (!causes[trans.to]) {
+				causes[trans.to] = 0;
+			}
+			causes[trans.to] += donation;
+		}
 	}
 
 	let me;
@@ -80,9 +85,10 @@ async function show (data) {
 		default: return;
 	}
 
-	let myDonated = parseInt(me);
-    const total = ben + erin + joseph + beth
+	let myDonated = parseFloat(me);
+    const total = ben + erin + joseph + beth;
 
+	console.log(causes);
 
 	document.getElementById('data').innerHTML = `
         <h2>£${total} Donated In Total</h2>
@@ -95,7 +101,7 @@ async function show (data) {
 
         <h2> Top Causes <h2>
         ${Object.keys(causes)
-		.sort((a, b) => causes[a] - causes[b])
+		.sort((a, b) => causes[b] - causes[a])
 		.map(c => `
                 <div class="cause">
                     ${c}: ${causes[c]}

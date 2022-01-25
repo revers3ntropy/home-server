@@ -11,7 +11,7 @@ if (!ERROR || !entries || !SEARCH || !ALERT_BANNER) {
 
 ALERT_BANNER.style.display = 'none';
 
-function alertBanner(msg) {
+function alertBanner (msg) {
     ALERT_BANNER.style.display = 'flex';
     ALERT_BANNER.innerHTML = `
             ${msg}
@@ -23,7 +23,7 @@ function alertBanner(msg) {
 }
 
 // src: https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
-function fallbackCopyTextToClipboard(text) {
+function fallbackCopyTextToClipboard (text) {
     const textArea = document.createElement("textarea");
     textArea.value = text;
 
@@ -45,7 +45,7 @@ function fallbackCopyTextToClipboard(text) {
 
     document.body.removeChild(textArea);
 }
-function copy(text) {
+function copy (text) {
     if (!navigator.clipboard) {
         fallbackCopyTextToClipboard(text);
         return;

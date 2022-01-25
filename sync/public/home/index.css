@@ -21,6 +21,8 @@
     border-radius: 4px;
     border: 1px solid var(--border);
     transition: 200ms;
+    padding: 8px !important;
+    margin: 5px;
 }
 
 #go:hover {

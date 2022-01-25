@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -82,7 +83,9 @@ func suggest(w http.ResponseWriter, body map[string]interface{}) {
 		return
 	}
 
-	if SUGGESTIONS.Append([]string{suggestion, "0"}) {
+	cleanSuggestion := strings.Replace(suggestion, ",", "", -1)
+
+	if SUGGESTIONS.Append([]string{cleanSuggestion, "0"}) {
 		_, _ = fmt.Fprintf(w, "{\"ok\": true}")
 	} else {
 		_, _ = fmt.Fprintf(w,
@@ -163,7 +166,7 @@ func makeTransaction(w http.ResponseWriter, body map[string]interface{}) {
 	id := strconv.Itoa(TRANSACTIONS.Len())
 
 	TRANSACTIONS.Append([]string{
-		id, person, in, out, current, "", to, detail, "0", ""})
+		id, person, in, out, current, "", to, detail, "", ""})
 
 	_, _ = fmt.Fprintf(w, "{\"ok\": true}")
 }
@@ -189,6 +192,31 @@ func confirmTransaction(w http.ResponseWriter, body map[string]interface{}) {
 
 	TRANSACTIONS.Set("confirm_detail", detail, func(row []string) bool {
 		return row[0] == id
+	})
+
+	_, _ = fmt.Fprintf(w, "{\"ok\": true}")
+}
+
+func deleteTransaction(w http.ResponseWriter, body map[string]interface{}) {
+	id, idSuccess := strFromMap(body, "id")
+	if !idSuccess {
+		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.id is not string\"}")
+		return
+	}
+
+	TRANSACTIONS.Delete(func(row []string) bool {
+		return row[0] == id
+	})
+
+	var i = 0
+
+	// shift ids to make sure that there aren't any gaps
+	TRANSACTIONS.Update(func(row []string) bool {
+		return true
+	}, func(row []string) []string {
+		row[0] = strconv.Itoa(i)
+		i++
+		return row
 	})
 
 	_, _ = fmt.Fprintf(w, "{\"ok\": true}")
