@@ -80,31 +80,29 @@ async function show (data) {
 		default: return;
 	}
 
-	myDonated = parseInt(me);
+	let myDonated = parseInt(me);
     const total = ben + erin + joseph + beth
 
 
-    let out = `
+	document.getElementById('data').innerHTML = `
         <h2>£${total} Donated In Total</h2>
         <h3>You have donated £${myDonated}</h3>
 
-        <div> Beth has donated ${beth}</div>
-        <div> Ben has donated ${ben}</div>
-        <div> Joseph has donated ${joseph}</div>
-        <div> Erin has donated ${erin}</div>
+        <div> Beth has donated £${beth}</div>
+        <div> Ben has donated £${ben}</div>
+        <div> Joseph has donated £${joseph}</div>
+        <div> Erin has donated £${erin}</div>
 
         <h2> Top Causes <h2>
         ${Object.keys(causes)
-            .sort((a, b) => causes[a] - causes[b])
-            .map(c => `
+		.sort((a, b) => causes[a] - causes[b])
+		.map(c => `
                 <div class="cause">
                     ${c}: ${causes[c]}
                 </div>
             `).join('')
-        }
+		}
     `;
-
-    document.getElementById('data').innerHTML = out;
 }
 
 async function reload () {

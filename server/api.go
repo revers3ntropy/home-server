@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"strconv"
 	"time"
-	gomail "gopkg.in/mail.v2"
 )
 
 // REDIRECTS
@@ -147,12 +146,6 @@ func makeTransaction(w http.ResponseWriter, body map[string]interface{}) {
 		return
 	}
 
-	instructions, instructionsSuccess := strFromMap(body, "instructions")
-	if !instructionsSuccess {
-		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.instructions is not string\"}")
-		return
-	}
-
 	to, toSuccess := strFromMap(body, "to")
 	if !toSuccess {
 		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.to is not string\"}")
@@ -169,36 +162,8 @@ func makeTransaction(w http.ResponseWriter, body map[string]interface{}) {
 
 	id := strconv.Itoa(TRANSACTIONS.Len())
 
-	TRANSACTIONS.Append([]string{id, person, in, out, current, "", instructions, to, detail, "0", ""})
-
-	// send email
-	m := gomail.NewMessage()
-
-	// Set E-Mail sender
-	m.SetHeader("From", "josephcoppin@gmail.com")
-
-	// Set E-Mail receivers
-	m.SetHeader("To", "coppin@gmail.com")
-
-	// Set E-Mail subject
-	m.SetHeader("Subject", "Donation")
-
-	// Set E-Mail body. You can set plain text or html with text/html
-	m.SetBody("text/plain", "A donation has been made by " + person + " of +£" + in + " and -£" + out + ". They say: " + instructions)
-
-	// Settings for SMTP server
-	d := gomail.NewDialer("smtp.gmail.com", 587, "josephcoppin@gmail.com", "<email_password>")
-
-	// This is only needed when SSL/TLS certificate is not valid on server.
-	// In production this should be set to false.
-	d.TLSConfig = &tls.Config{InsecureSkipVerify: true}
-
-	// Now send E-Mail
-	if err := d.DialAndSend(m); err != nil {
-		fmt.Println(err)
-		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"Email failed to send, but the transaction has been logged\"}")
-		panic(err)
-	}
+	TRANSACTIONS.Append([]string{
+		id, person, in, out, current, "", to, detail, "0", ""})
 
 	_, _ = fmt.Fprintf(w, "{\"ok\": true}")
 }

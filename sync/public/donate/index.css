@@ -44,3 +44,10 @@ button:hover {
     cursor: pointer;
     transform: scale(1.05);
 }
+
+canvas {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1000;
+}
