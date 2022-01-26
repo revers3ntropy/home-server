@@ -42,6 +42,7 @@ func (r *Reader) Load() {
 	if err != nil {
 		log.Fatal("Unable to read input file "+r.path, err)
 	}
+
 	defer func(f *os.File) {
 		err := f.Close()
 		if err != nil {
@@ -51,6 +52,7 @@ func (r *Reader) Load() {
 
 	csvReader := csv.NewReader(f)
 	records, err := csvReader.ReadAll()
+
 	if err != nil {
 		log.Fatal("Unable to parse file as CSV for "+r.path, err)
 	}
@@ -92,6 +94,7 @@ func (r *Reader) Where(selector func(row []string) bool) [][]string {
 }
 
 func (r *Reader) SelectFirstWhere(searchColumn string, equals string, selectColumn string) (string, bool) {
+
 	idxSearch := r.columnIdFromName(searchColumn)
 	idxFind := r.columnIdFromName(selectColumn)
 
@@ -106,6 +109,7 @@ func (r *Reader) SelectFirstWhere(searchColumn string, equals string, selectColu
 func (r *Reader) SelectWhere(column string, selector func(row []string) bool) []string {
 	var c []string
 	idx := r.columnIdFromName(column)
+
 	for _, s := range r.rows {
 		if selector(s) {
 			c = append(c, s[idx])
@@ -115,14 +119,11 @@ func (r *Reader) SelectWhere(column string, selector func(row []string) bool) []
 }
 
 func (r *Reader) Len() int {
-	var n int
-	for _, _ = range r.rows {
-		n++
-	}
-	return n
+	return len(r.rows)
 }
 
 func (r *Reader) Update(filter func(row []string) bool, updator func(row []string) []string) {
+
 	for i, row := range r.rows {
 		if filter(row) {
 			r.rows[i] = updator(row)
@@ -170,9 +171,10 @@ func (r *Reader) Append(row []string) bool {
 
 func (r *Reader) HasRowWith(column string, entry string) bool {
 	idx := r.columnIdFromName(column)
-	return len(r.Where(func(row []string) bool {
+	res := r.Where(func(row []string) bool {
 		return row[idx] == entry
-	})) > 0
+	})
+	return len(res) > 0
 }
 
 func NewReader(path string) *Reader {

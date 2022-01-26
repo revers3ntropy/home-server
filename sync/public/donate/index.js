@@ -36,30 +36,6 @@ function alertBanner (msg) {
 	}, 5000);
 }
 
-function timeDifference (time) {
-	const sPerMinute = 60;
-	const sPerHour = sPerMinute * 60;
-	const sPerDay = sPerHour * 24;
-	const sPerMonth = sPerDay * 30;
-	const sPerYear = sPerDay * 365;
-
-	const elapsed = (now/1000) - time;
-
-	if (elapsed < sPerMinute) {
-		return Math.round(elapsed) + ' seconds ago';
-	} else if (elapsed < sPerHour) {
-		return Math.round(elapsed / sPerMinute) + ' minutes ago';
-	} else if (elapsed < sPerDay ) {
-		return Math.round(elapsed / sPerHour) + ' hours ago';
-	} else if (elapsed < sPerMonth) {
-		return Math.round(elapsed / sPerDay) + ' days ago';
-	} else if (elapsed < sPerYear) {
-		return Math.round(elapsed / sPerMonth) + ' months ago';
-	} else {
-		return Math.round(elapsed / sPerYear) + ' years ago';
-	}
-}
-
 /**
  * @param {string} person
  * @param {string|number} amount
@@ -200,32 +176,20 @@ async function donate () {
 	const to = DONATE_TO.value;
 	const detail = DONATE_DETAIL.value;
 
-	if (!DONATE_AMOUNT.value) {
-		return 'must specify amount';
-	}
-
+	if (!DONATE_AMOUNT.value) return 'must specify amount';
 	try {
 		amount = parseFloat(DONATE_AMOUNT.value);
 	} catch (e) {
 		return 'Invalid amount';
 	}
-
-	if (amount > spendingPower) {
-		return 'not enough balance in your account';
-	}
-
-	if (amount < 0.01) {
-		return 'to small of an amount to donate';
-	}
+	if (amount > spendingPower) return 'not enough balance in your account';
+	if (amount < 0.01) return 'to small of an amount to donate';
 
 	const res = JSON.parse(await (await fetch('http://192.168.0.64/make-transaction', {
 		method: 'POST',
 		body: JSON.stringify({
-			in: '0',
-			out: amount.toFixed(2),
-			to,
-			detail,
-			person: me,
+			in: '0', out: amount.toFixed(2),
+			to, detail, person: me,
 			notify: DONATE_ALERT.checked ? '1' : '0'
 		})
 	})).text());
@@ -247,40 +211,33 @@ async function doTransaction () {
 }
 
 async function deleteTransaction (id) {
-
 	if (typeof id !== "number") {
 		alertBanner('invalid deletion');
 		return;
 	}
-
 	if (id < 0) {
 		alertBanner('invalid delete id');
 		return;
 	}
-
 	let trans = transactionByID(id);
 	if (!trans) {
 		alertBanner('invalid delete id - trans not found');
 		return;
 	}
-
 	const amount = parseFloat(trans.in) - parseFloat(trans.out);
 	if (!confirm(`Are you sure you want to delete the transaction of £${amount} to ${
 			trans.to || 'unknown'}? This action is irreversible.`)) {
 		return;
 	}
-
 	const res = JSON.parse(await (await fetch('http://192.168.0.64/delete-transaction', {
 		method: 'POST',
 		body: JSON.stringify({
 			id: id.toString()
 		})
 	})).text());
-
 	if (!res.ok) {
 		alertBanner(res.error);
 	}
-
 	await reload();
 }
 
@@ -307,7 +264,6 @@ async function reload () {
 		let amount = parseFloat(trans.in) - parseFloat(trans.out);
 		ledger.innerHTML += transaction({...trans, amount});
 	}
-
 	await updateBalance(transactions);
 }
 

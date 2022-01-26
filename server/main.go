@@ -71,17 +71,22 @@ func apiCall(w http.ResponseWriter, r *http.Request, path string) {
 
 func redirect(possibleRedirects []string, path string, w http.ResponseWriter, req *http.Request) {
 	redirect := possibleRedirects[0]
+
 	REDIRECTS.Update(func(row []string) bool {
 		return row[0] == path
+
 	}, func(row []string) []string {
 		num, e := strconv.Atoi(row[3])
+
 		if e != nil {
 			fmt.Println("Error converting string to int when logging redirect")
 			return row
 		}
+
 		row[3] = strconv.Itoa(num + 1)
 		return row
 	})
+
 	http.Redirect(w, req, redirect, http.StatusSeeOther)
 }
 
@@ -133,6 +138,7 @@ func dealWithFileExt(resource string, content []byte, w http.ResponseWriter) []b
 
 func filePreprocessor(fileContent []byte) []byte {
 	content := string(fileContent)
+
 	for strings.Contains(content, "#include") {
 		idx := strings.Index(content, "#include")
 
@@ -211,6 +217,7 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 
 	serveFile(path, w)
 }
+
 func main() {
 	if godotenv.Load() != nil {
 		fmt.Println("error loading .env")

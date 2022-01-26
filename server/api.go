@@ -170,7 +170,6 @@ func makeTransaction(w http.ResponseWriter, body map[string]interface{}) {
 	}
 
 	current := strconv.Itoa(int(time.Now().Unix()))
-
 	id := strconv.Itoa(TRANSACTIONS.Len())
 
 	TRANSACTIONS.Append([]string{
