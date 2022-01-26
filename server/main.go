@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/joho/godotenv"
 	"hp-server/server/csv"
 	"io/ioutil"
 	"log"
@@ -210,8 +211,12 @@ func handleRequest(w http.ResponseWriter, req *http.Request) {
 
 	serveFile(path, w)
 }
-
 func main() {
+	if godotenv.Load() != nil {
+		fmt.Println("error loading .env")
+		return
+	}
+
 	fmt.Println("Starting server on port " + PORT)
 	log.Fatal(http.ListenAndServe(":"+PORT, http.HandlerFunc(handleRequest)))
 }

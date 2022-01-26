@@ -56,6 +56,7 @@ canvas {
     padding: 8px;
     font-size: 20px;
     background: var(--bg-accent);
+    margin: 5px 20px;
 }
 
 .transaction .icon > svg {

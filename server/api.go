@@ -3,6 +3,8 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	"time"
@@ -161,6 +163,12 @@ func makeTransaction(w http.ResponseWriter, body map[string]interface{}) {
 		return
 	}
 
+	notify, notifySuccess := strFromMap(body, "notify")
+	if !notifySuccess {
+		_, _ = fmt.Fprintf(w, "{\"ok\": false, \"error\": \"type of body.notify is not string\"}")
+		return
+	}
+
 	current := strconv.Itoa(int(time.Now().Unix()))
 
 	id := strconv.Itoa(TRANSACTIONS.Len())
@@ -169,6 +177,15 @@ func makeTransaction(w http.ResponseWriter, body map[string]interface{}) {
 		id, person, in, out, current, "", to, detail, "", ""})
 
 	_, _ = fmt.Fprintf(w, "{\"ok\": true}")
+
+	if notify == "1" {
+		cmd := exec.Command("/bin/sh", os.Getenv("mailscript"))
+		_, err := cmd.Output()
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+	}
 }
 
 func confirmTransaction(w http.ResponseWriter, body map[string]interface{}) {

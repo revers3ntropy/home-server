@@ -184,6 +184,7 @@ async function updateBalance (data) {
 const DONATE_AMOUNT = document.getElementById('donate-amount');
 const DONATE_TO = document.getElementById('donate-to');
 const DONATE_DETAIL = document.getElementById('donate-detail');
+const DONATE_ALERT = document.getElementById('donate-alert');
 
 /**
  * Donates an amount
@@ -225,6 +226,7 @@ async function donate () {
 			to,
 			detail,
 			person: me,
+			notify: DONATE_ALERT.checked ? '1' : '0'
 		})
 	})).text());
 
