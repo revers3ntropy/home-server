@@ -172,8 +172,7 @@ func makeTransaction(w http.ResponseWriter, body map[string]interface{}) {
 	current := strconv.Itoa(int(time.Now().Unix()))
 	id := strconv.Itoa(TRANSACTIONS.Len())
 
-	TRANSACTIONS.Append([]string{
-		id, person, in, out, current, "", to, detail, "", ""})
+	TRANSACTIONS.Append([]string{id, person, in, out, current, "", to, detail, "", ""})
 
 	_, _ = fmt.Fprintf(w, "{\"ok\": true}")
 

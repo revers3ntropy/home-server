@@ -37,7 +37,7 @@ function fallbackCopyTextToClipboard (text) {
     textArea.select();
 
     try {
-        var successful = document.execCommand('copy');
+        const successful = document.execCommand('copy');
         alertBanner(successful ? 'Copied Successfully!' : 'Copy failed');
     } catch (err) {
         console.error('Fallback: Oops, unable to copy', err);
@@ -94,8 +94,7 @@ function toggleOfName (name, value) {
     }).then(handleServerResponse);
 }
 
-let CACHE;
-
+let CACHE = '';
 async function loadData (search, useCache) {
     if (!useCache || !CACHE) {
         const data = await fetch(
